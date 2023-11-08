@@ -2,12 +2,38 @@
 
 const char kWindowTitle[] = "LC1B_12_クロカワツバサ_タイトル";
 
+
+float powf(float base, float exponent) {
+	if (exponent == 0) {
+		return 1;
+	}
+
+	return base * powf(base, exponent - 1);
+}
+
+
+struct Vector2 {
+	float x;
+	float y;
+};
+
+struct Ball {
+	Vector2 pos_;
+	float radius_;
+	int color_;
+	Vector2 startPos_;
+	Vector2 endPos_;
+
+	Ball();
+
+};
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, 1280, 720);
 
+	Ball ball;
 	// キー入力結果を受け取る箱
 	char keys[256] = {0};
 	char preKeys[256] = {0};
@@ -24,7 +50,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-
+		
 		///
 		/// ↑更新処理ここまで
 		///
@@ -50,3 +76,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Novice::Finalize();
 	return 0;
 }
+
+
+Ball::Ball()
