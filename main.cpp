@@ -13,15 +13,6 @@ enum EaseMode {
 	Out
 };
 
-float powf(float base, float exponent) {
-	if (exponent == 0) {
-		return 1;
-	}
-
-	return base * powf(base, exponent - 1);
-}
-
-
 struct Vector2 {
 	float x;
 	float y;
@@ -150,10 +141,14 @@ Ball::Ball() {
 
 void Ball::Update(int easeMode) {
 
-	t_ += (1.0f / moveTime_);
+	if (t_ < 1.0f) {
+		t_ += (1.0f / moveTime_);
 
-	switch (easeMode_)
-	{
+	} else {
+		t_ = 1.0f;
+	}
+
+	switch (easeMode) {
 	case None:
 		pos_.x = (1 - t_) * startPos_.x + t_ * endPos_.x;
 		pos_.y = (1 - t_) * startPos_.y + t_ * endPos_.y;
@@ -184,18 +179,18 @@ void Ball::Update(int easeMode) {
 	}
 
 
-}
+	}
 
-//描画
-void Ball::Draw() {
+	//描画
+	void Ball::Draw() {
 
-	Novice::DrawEllipse(
-		int(pos_.x),
-		int(pos_.y),
-		int(radius_),
-		int(radius_),
-		0.0f,
-		color_,
-		kFillModeSolid
-	);
-}
+		Novice::DrawEllipse(
+			int(pos_.x),
+			int(pos_.y),
+			int(radius_),
+			int(radius_),
+			0.0f,
+			color_,
+			kFillModeSolid
+		);
+	}
