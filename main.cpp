@@ -1,9 +1,17 @@
 #include <Novice.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 const char kWindowTitle[] = "LC1B_12_クロカワツバサ_タイトル";
 const int kWindowSizeX = 1280;
 const int kWindowSizeY = 720;
 
+enum EaseMode {
+	None,
+	InOut,
+	In,
+	Out
+};
 
 float powf(float base, float exponent) {
 	if (exponent == 0) {
@@ -28,6 +36,7 @@ struct Ball {
 	Vector2 endPos_;
 
 	float t_;
+	float addT_;
 	int moveTime_;
 
 	Ball();
@@ -36,7 +45,7 @@ struct Ball {
 	void Draw();
 
 	//更新処理
-	void Update();
+	void Update(int easeMode);
 };
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -74,6 +83,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+
+		for (int i = 0; i < kMaxBall; i++) {
+			ball[i].Update(i);
+		}
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -83,12 +97,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		for (int i = 0; i < kMaxBall; i++) {
-		
+
 			ball[i].Draw();
 
 			Novice::ScreenPrintf(20, 20 + 20 * i, "%f,%f", ball[i].pos_.x, ball[i].pos_.y);
 		}
-		
+
 
 		///
 		/// ↑描画処理ここまで
@@ -128,13 +142,48 @@ Ball::Ball() {
 
 	color_ = 0xff0000ff;
 
-
+	t_ = 0;
+	addT_ = 0;
 	moveTime_ = 120;
+
 }
 
-void Ball::Update() {
+void Ball::Update(int easeMode) {
 
 	t_ += (1.0f / moveTime_);
+
+	switch (easeMode_)
+	{
+	case None:
+		pos_.x = (1 - t_) * startPos_.x + t_ * endPos_.x;
+		pos_.y = (1 - t_) * startPos_.y + t_ * endPos_.y;
+		break;
+
+	case InOut:
+
+		addT_ = -(cosf(static_cast<float>(M_PI) * t_) - 1.0f) / 2.0f;
+		pos_.x = (1 - addT_) * startPos_.x + addT_ * endPos_.x;
+		pos_.y = (1 - addT_) * startPos_.y + addT_ * endPos_.y;
+
+
+		break;
+
+	case In:
+		addT_ = 1.0f - cosf((t_ * static_cast<float>(M_PI)) / 2.0f);
+		pos_.x = (1 - addT_) * startPos_.x + addT_ * endPos_.x;
+		pos_.y = (1 - addT_) * startPos_.y + addT_ * endPos_.y;
+		break;
+
+	case Out:
+		addT_ = sinf((t_ * static_cast<float>(M_PI)) / 2.0f);
+		pos_.x = (1 - addT_) * startPos_.x + addT_ * endPos_.x;
+		pos_.y = (1 - addT_) * startPos_.y + addT_ * endPos_.y;
+		break;
+	default:
+		break;
+	}
+
+
 }
 
 //描画
